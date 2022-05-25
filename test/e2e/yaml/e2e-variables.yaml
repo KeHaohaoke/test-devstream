@@ -1,7 +1,8 @@
 defaultBranch: main
 githubOrganization: devstream-io
+Owner: KeHaohaoke
 repoName: dtm-e2e-go
 dockerRegistryUserName: dtme2etest
 argocdNameSpace: argocd
 argocdDeployTimeout: 10m
-kanbanBoardName: dtmKanbanTest
+kanbanBoardName: dtmKanbanTest-1
