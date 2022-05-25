@@ -1,10 +1,4 @@
 tools:
- - name: github-repo-scaffolding-golang
-   instanceID: default
-   options:
-    owner: [[ Owner ]]
-    repo: [[ repoName ]]
-    branch: [[ defaultBranch ]]
   - name: github-repo-scaffolding-golang
     instanceID: default
     options:
