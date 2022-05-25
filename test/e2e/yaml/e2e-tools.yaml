@@ -6,6 +6,13 @@ tools:
       repo: [[ repoName ]]
       branch: [[ defaultBranch ]]
       image_repo: [[ dockerRegistryUserName ]]/[[ repoName ]]
+  - name: github-repo-scaffolding-golang
+    instanceID: default
+    options:
+      org: [[ githubOrganization ]]
+      repo: [[ repoTrelloName ]]
+      branch: [[ defaultBranch ]]
+      image_repo: [[ dockerRegistryUserName ]]/[[ repoTrelloName ]]
   - name: githubactions-golang
     instanceID: default
     dependsOn: ["github-repo-scaffolding-golang.default"]
