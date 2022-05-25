@@ -2,21 +2,21 @@ tools:
   - name: github-repo-scaffolding-golang
     instanceID: default
     options:
-      org: [[ githubOrganization ]]
+      owner: [[ Owner ]]
       repo: [[ repoName ]]
       branch: [[ defaultBranch ]]
   - name: trello
     instanceID: default
     dependsOn: [ ]
     options:
-      org: [[ githubOrganization ]]
+      owner: [[ Owner ]]
       repo: [[ repoName ]]
       kanbanBoardName: [[ kanbanBoardName ]]
   - name: trello-github-integ
     instanceID: default
     dependsOn: [ "trello.default" ]
     options:
-      org: [[ githubOrganization ]]
+      owner: [[ Owner ]]
       repo: [[ repoName ]]
       boardId: ${{ trello.default.outputs.boardId }}
       todoListId: ${{ trello.default.outputs.todoListId }}
