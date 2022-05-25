@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 
@@ -28,12 +29,21 @@ type Config struct {
 type ConfigFile struct {
 	VarFile  string `yaml:"varFile"`
 	ToolFile string `yaml:"toolFile"`
-	State    *State
+	State    *State `yaml:"state"`
 }
 
 type State struct {
-	Backend string                 `yaml:"backend"`
-	Options map[string]interface{} `yaml:"options"`
+	Backend string             `yaml:"backend"`
+	Options StateConfigOptions `yaml:"options"`
+}
+
+type StateConfigOptions struct {
+	// for s3 backend
+	Bucket string `yaml:"bucket"`
+	Region string `yaml:"region"`
+	Key    string `yaml:"key"`
+	// for local backend
+	StateFile string `yaml:"stateFile"`
 }
 
 // Tool is the struct for one section of the DevStream configuration file.
@@ -84,7 +94,7 @@ func LoadConf(configFileName string) (*Config, error) {
 	errs := validateConfigFile(&gConfig)
 	if len(errs) != 0 {
 		for _, e := range errs {
-			log.Errorf("General config validation failed: %s.", e)
+			log.Errorf("Config file validation failed: %s.", e)
 		}
 		return nil, nil
 	}
@@ -94,28 +104,31 @@ func LoadConf(configFileName string) (*Config, error) {
 		return nil, err
 	}
 
-	cfg := LoadToolConf(toolFilePath, varFilePath)
+	cfg, err := LoadToolConf(toolFilePath, varFilePath)
+	if err != nil {
+		return nil, err
+	}
 	cfg.State = gConfig.State
 	return cfg, nil
 }
 
 // LoadToolConf reads tool file rendering by var file as a Config struct.
-func LoadToolConf(toolFileName, varFileName string) *Config {
+func LoadToolConf(toolFileName, varFileName string) (*Config, error) {
 	configFileBytes, err := ioutil.ReadFile(toolFileName)
 	if err != nil {
 		log.Error(err)
 		log.Info("Maybe the default file doesn't exist or you forgot to pass your config file to the \"-f\" option?")
 		log.Info("See \"dtm help\" for more information.")
-		return nil
+		return nil, err
 	}
 
 	log.Debugf("Original config: \n%s\n", string(configFileBytes))
 
-	// handle variables in the config file
+	// handle variables in the config file if var file is provided
 	configFileBytesWithVarsRendered, err := renderVariables(varFileName, configFileBytes)
 	if err != nil {
 		log.Error(err)
-		return nil
+		return nil, err
 	}
 
 	log.Debugf("Config file after rendering with variables: \n%s\n", string(configFileBytesWithVarsRendered))
@@ -125,37 +138,38 @@ func LoadToolConf(toolFileName, varFileName string) *Config {
 	if err != nil {
 		log.Error("Please verify the format of your config file.")
 		log.Errorf("Reading config file failed. %s.", err)
-		return nil
+		return nil, err
 	}
 
 	errs := validateConfig(&config)
 	if len(errs) != 0 {
+		var errStrings []string
 		for _, e := range errs {
 			log.Errorf("Config validation failed: %s.", e)
+			errStrings = append(errStrings, e.Error())
 		}
-		return nil
+		return nil, fmt.Errorf(strings.Join(errStrings, "; "))
 	}
 
-	return &config
+	return &config, nil
 }
 
-// genToolVarPath return the Abs path of tool file and var file, if var file is null, return variables.yaml
+// genToolVarPath return the Abs path of tool file and var file, return (absToolFilePath, "") if var file is empty.
 func genToolVarPath(configFileName string, gConfig ConfigFile) (string, string, error) {
 	var absToolFilePath, absVarFilePath string
 	var err error
+
 	absToolFilePath, err = parseCustomPath(configFileName, gConfig.ToolFile)
 	if err != nil {
 		return "", "", err
 	}
-
-	absVarFilePath = "variables.yaml"
+	// if var file is empty, just return ""
 	if gConfig.VarFile != "" {
 		absVarFilePath, err = parseCustomPath(configFileName, gConfig.VarFile)
 		if err != nil {
 			return "", "", err
 		}
 	}
-
 	return absToolFilePath, absVarFilePath, nil
 }
 

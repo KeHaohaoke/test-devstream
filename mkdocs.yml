@@ -1,20 +1,35 @@
 site_name: DevStream Docs
 theme: material
-
+site_url: https://docs.devstream.io
+repo_name: devstream
+repo_url: https://github.com/devstream-io/devstream
+site_description: The DevStream Docs
+markdown_extensions:
+  toc:
+    permalink: true
+extra:
+  version:
+    provider: json
+    index: "https://docs.devstream.io/en/latest/"
+    current: latest
 nav:
   - 'quickstart_en.md'
-  - Tutorials:
-    - 'tutorials/autocomplete.md'
-    - Best Pratices:
-      - 'tutorials/best-practices/gitops.md'
+  - Best Practices:
+    - 'best-practices/gitops.md'
   - Commands:
+    - 'commands/autocomplete.md'
+    - 'commands/init.md'
     - 'commands/apply.md'
     - 'commands/verify.md'
     - 'commands/delete.md'
     - 'commands/destroy.md'
+    - 'commands/develop.md'
   - Core Concepts:
     - 'core-concepts/core-concepts.md'
     - 'core-concepts/config.md'
+    - 'core-concepts/variables.md'
+    - 'core-concepts/stateconfig.md'
+    - 'core-concepts/dependencies.md'
     - 'core-concepts/output.md'
   - Plugins:
     - 'plugins/plugins-list.md'
@@ -35,11 +50,16 @@ nav:
     - 'plugins/openldap.md'
     - 'plugins/trello.md'
     - 'plugins/trello-github-integ.md'
-  - Contributing:
-    - 'contributing/development-workflow.md'
-    - 'contributing/contributor_ladder_growth_programs.md'
-    - 'contributing/project-layout.md'
-    - 'contributing/architecture.md'
-    - 'contributing/creating-a-plugin.md'
-    - 'contributing/branch-and-release.md'
+  - 'contribute.md'
+  - Development:
+    - 'development/development-workflow.md'
+    - 'development/contributor_ladder_growth_programs.md'
+    - 'development/project-layout.md'
+    - 'development/architecture.md'
+    - 'development/build.md'
+    - 'development/test.md'
+    - 'development/commit-messages.md'
+    - 'development/lint.md'
+    - 'development/creating-a-plugin.md'
+    - 'development/branch-and-release.md'
   - 'troubleshooting.md'

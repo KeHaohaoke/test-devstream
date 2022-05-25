@@ -1,7 +1,6 @@
-
 SELF_DIR=$(dir $(lastword $(MAKEFILE_LIST)))
-
 GOOS=$(shell go env GOOS)
+GOPATH=$(shell go env GOPATH)
 GOARCH=$(shell go env GOARCH)
 GO_PLUGIN_BUILD=go build -buildmode=plugin -trimpath -gcflags="all=-N -l"
 PLUGINS=$(notdir $(wildcard $(ROOT_DIR)/cmd/plugin/*))
@@ -24,7 +23,9 @@ ROOT_DIR := $(abspath $(shell cd $(SELF_DIR) && pwd -P))
 endif
 
 ifeq ($(origin VERSION), undefined)
-VERSION := $(shell git describe --tags --always --match='v*')
+# the VERSION is a number, like 0.6.0
+# it doesn't contain the prefix v, not v0.6.0, but 0.6.0
+VERSION := $(shell git describe --tags --always --match='v*' | cut -c 2-)
 endif
 
 ifeq ($(origin PLUGINS_DIR),undefined)
@@ -74,9 +75,9 @@ md5-plugin.%:
 .PHONY: fmt
 fmt:  ## Run 'go fmt' & goimports against code.
 	@echo ">>>>>>>>>>>> Formating codes"
-	@go install golang.org/x/tools/cmd/goimports@latest
+	@[[ -e ${GOPATH}/bin/goimports ]] || (echo "installing goimports ..." && go install golang.org/x/tools/cmd/goimports@latest)
 	@$(FIND) -type f | xargs gofmt -s -w
-	@$(FIND) -type f | xargs goimports -w -local $(DTM_ROOT)
+	@$(FIND) -type f | xargs ${GOPATH}/bin/goimports -w -local $(DTM_ROOT)
 
 .PHONY: vet
 vet: ## Run "go vet ./...".

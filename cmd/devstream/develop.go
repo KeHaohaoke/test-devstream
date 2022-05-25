@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/devstream-io/devstream/internal/pkg/develop"
@@ -17,38 +15,44 @@ var (
 var developCMD = &cobra.Command{
 	Use:   "develop",
 	Short: "Develop is used for develop a new plugin",
-	Long: `Develop is used for develop a new plugin.
+}
+
+var developCreatePluginCMD = &cobra.Command{
+	Use:   "create-plugin",
+	Short: "Create a new plugin",
+	Long: `Create-plugin is used for creating a new plugin.
+Exampls:
+  dtm develop create-plugin --name=YOUR-PLUGIN-NAME`,
+	Run: developCreateCMDFunc,
+}
+
+var developValidatePluginCMD = &cobra.Command{
+	Use:   "validate-plugin",
+	Short: "Validate a plugin",
+	Long: `Validate-plugin is used for validating an existing plugin or all plugins.
 Examples:
-  dtm develop create-plugin --name=YOUR-PLUGIN-NAME,
-  dtm develop validate-plugin --name=YOUR-PLUGIN-NAME`,
-	Run: developCMDFunc,
+  dtm develop validate-plugin --name=YOUR-PLUGIN-NAME,
+  dtm develop validate-plugin --all`,
+	Run: developValidateCMDFunc,
 }
 
-func developCMDFunc(cmd *cobra.Command, args []string) {
-	if err := validateDevelopArgs(args); err != nil {
-		log.Fatal(err)
-	}
-
-	developAction := develop.Action(args[0])
-	log.Debugf("The develop action is: %s.", developAction)
-	if err := develop.ExecuteAction(developAction); err != nil {
+func developCreateCMDFunc(cmd *cobra.Command, args []string) {
+	if err := develop.CreatePlugin(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func validateDevelopArgs(args []string) error {
-	// "create-plugin" or "validate-plugin". Maybe it will be "delete-plugin"/"rename-plugin" in future.
-	if len(args) != 1 {
-		return fmt.Errorf("illegal args count (expect 1, got %d)", len(args))
+func developValidateCMDFunc(cmd *cobra.Command, args []string) {
+	if err := develop.ValidatePlugin(); err != nil {
+		log.Fatal(err)
 	}
-	developAction := develop.Action(args[0])
-	if !develop.IsValideAction(developAction) {
-		return fmt.Errorf("invalide Develop Action")
-	}
-	return nil
 }
 
 func init() {
-	developCMD.PersistentFlags().StringVarP(&name, "name", "n", "", "specify name with the new plugin")
-	developCMD.PersistentFlags().BoolVarP(&all, "all", "a", false, "validate all plugins")
+	developCMD.AddCommand(developCreatePluginCMD)
+	developCMD.AddCommand(developValidatePluginCMD)
+
+	developCreatePluginCMD.PersistentFlags().StringVarP(&name, "name", "n", "", "specify name with the new plugin")
+	developValidatePluginCMD.PersistentFlags().StringVarP(&name, "name", "n", "", "specify name with the new plugin")
+	developValidatePluginCMD.PersistentFlags().BoolVarP(&all, "all", "a", false, "validate all plugins")
 }
