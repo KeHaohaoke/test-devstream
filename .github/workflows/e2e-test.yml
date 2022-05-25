@@ -24,6 +24,7 @@ env:
 
 jobs:
   e2e-test:
+    # permissions
     permissions:
       id-token: write
       contents: write
