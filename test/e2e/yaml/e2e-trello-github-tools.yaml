@@ -1,4 +1,11 @@
 tools:
+  - name: github-repo-scaffolding-golang
+    instanceID: default
+    options:
+      org: [[ githubOrganization ]]
+      repo: [[ repoName ]]
+      branch: [[ defaultBranch ]]
+      image_repo: [[ dockerRegistryUserName ]]/[[ repoName ]]
   - name: trello
     instanceID: default
     dependsOn: [ ]
