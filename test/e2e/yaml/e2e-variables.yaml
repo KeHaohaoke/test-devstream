@@ -1,6 +1,7 @@
 defaultBranch: main
 githubOrganization: devstream-io
 repoName: dtm-e2e-go
+repoTrelloName: dtm-e2e-trello-github
 dockerRegistryUserName: dtme2etest
 argocdNameSpace: argocd
 argocdDeployTimeout: 10m
