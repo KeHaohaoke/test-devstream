@@ -1,0 +1,17 @@
+name: license check by FOSSA
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  fossa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: fossa-contrib/fossa-action@v1
+        with:
+          # https://docs.fossa.com/docs/api-reference#push-only-api-token
+          fossa-api-key: ${{ secrets.FOSSA_PUSH_ONLY_API_KEY }}
