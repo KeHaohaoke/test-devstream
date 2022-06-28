@@ -2,7 +2,7 @@ name: license check by FOSSA
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   fossa:
