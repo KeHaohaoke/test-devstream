@@ -68,7 +68,9 @@ jobs:
       - name: apply git-ops
         id: git_ops_apply
         continue-on-error: true
-        run: ./dtm apply -f e2e-config.yaml -y
+        run: |
+               ./dtm apply -f e2e-config.yaml -y
+               echo ::set-output name=exit_code::$?
       - name: test git-ops step success or not
         if: steps.git_ops_apply.outputs.exit_code != 0
         run: |
@@ -77,7 +79,9 @@ jobs:
       - name: apply twice git-ops
         continue-on-error: true
         id: git_ops_apply_twice
-        run: ./dtm apply -f e2e-config.yaml -y
+        run: |
+           ./dtm apply -f e2e-config.yaml -y
+           echo ::set-output name=exit_code::$?
       - name: test git-ops-twice step success or not
         if: steps.git_ops_apply_twice.outputs.exit_code != 0
         run: |
