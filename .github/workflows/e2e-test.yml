@@ -67,8 +67,22 @@ jobs:
         run: cp ./test/e2e/yaml/e2e-*.yaml ./
       - name: apply git-ops
         run: ./dtm apply -f e2e-config.yaml -y
+      - name: test last step success or not
+        run: |
+          EXCODE=$?
+          if [ "$EXCODE" == "0" ]; then
+            echo "e2e failure"      
+            curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"<at user_id=\"all\">All</at>Attention: e2e actions failure"}}' https://open.feishu.cn/open-apis/bot/v2/hook/11cccd25-6ba1-4e0d-90fa-dde193927b05
+          fi
       - name: apply twice git-ops
         run: ./dtm apply -f e2e-config.yaml -y
+      - name: test last step success or not
+        run: |
+          EXCODE=$?
+          if [ "$EXCODE" == "0" ]; then
+            echo "e2e failure"      
+            curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"<at user_id=\"all\">All</at>Attention: e2e actions failure"}}' https://open.feishu.cn/open-apis/bot/v2/hook/11cccd25-6ba1-4e0d-90fa-dde193927b05
+          fi
       - name: check if pod is ready
         run: while [[ $(kubectl get pods -l app=dtm-e2e-go -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "pod not ready yet..."; sleep 3; done
         timeout-minutes: 10
