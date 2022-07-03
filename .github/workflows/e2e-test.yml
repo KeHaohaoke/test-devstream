@@ -52,8 +52,8 @@ jobs:
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-${{ matrix.go }}-
-#       - name: Build
-#         run: make build -j8
+      - name: Build
+        run: make build -j8
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
@@ -71,9 +71,9 @@ jobs:
       - name: apply twice git-ops
         id: git_ops_apply_twice
         run: ./dtm apply -f e2e-config.yaml -y
-#       - name: check if pod is ready
-#         run: while [[ $(kubectl get pods -l app=dtm-e2e-go -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "pod not ready yet..."; sleep 3; done
-#         timeout-minutes: 10
+      - name: check if pod is ready
+        run: while [[ $(kubectl get pods -l app=dtm-e2e-go -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "pod not ready yet..."; sleep 3; done
+        timeout-minutes: 10
       - name: verify
         run: ./dtm verify -f e2e-config.yaml
       - name: clean
