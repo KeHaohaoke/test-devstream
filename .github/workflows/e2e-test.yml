@@ -75,6 +75,7 @@ jobs:
           echo "e2e failure"      
           curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"<at user_id=\"all\">All</at>Attention: e2e actions failure"}}' https://open.feishu.cn/open-apis/bot/v2/hook/11cccd25-6ba1-4e0d-90fa-dde193927b05
       - name: apply twice git-ops
+        continue-on-error: true
         id: git_ops_apply_twice
         run: ./dtm apply -f e2e-config.yaml -y
       - name: test git-ops-twice step success or not
