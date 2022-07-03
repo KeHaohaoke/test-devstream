@@ -52,8 +52,8 @@ jobs:
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-${{ matrix.go }}-
-      - name: Build
-        run: make build -j8
+#       - name: Build
+#         run: make build -j8
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
@@ -66,6 +66,7 @@ jobs:
       - name: copy config files
         run: cp ./test/e2e/yaml/e2e-*.yaml ./
       - name: apply git-ops
+        continue-on-error: true
         run: ./dtm apply -f e2e-config.yaml -y
       - name: test last step success or not
         run: |
@@ -75,6 +76,7 @@ jobs:
             curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"<at user_id=\"all\">All</at>Attention: e2e actions failure"}}' https://open.feishu.cn/open-apis/bot/v2/hook/11cccd25-6ba1-4e0d-90fa-dde193927b05
           fi
       - name: apply twice git-ops
+        continue-on-error: true
         run: ./dtm apply -f e2e-config.yaml -y
       - name: test last step success or not
         run: |
