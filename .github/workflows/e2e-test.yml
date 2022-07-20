@@ -21,6 +21,10 @@ env:
   DOCKERHUB_TOKEN: ${{ secrets.E2E_DOCKERHUB_TOKEN }}
   TRELLO_API_KEY: ${{ secrets.E2E_TRELLO_API_KEY }}
   TRELLO_TOKEN: ${{ secrets.E2E_TRELLO_TOKEN }}
+  
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
   e2e-test:
