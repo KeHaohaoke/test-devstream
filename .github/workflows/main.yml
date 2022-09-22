@@ -19,7 +19,7 @@ jobs:
         go: [1.18.x]
         include:
           - os: macos-latest
-    runs-on: ${{ matrix.os }}
+    runs-on: [self-hosted, linux, X64]
     name: build-test-${{ matrix.os }}
     steps:
       - name: Checkout
